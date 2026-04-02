@@ -3,24 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JP Tools - 日本語開発者ツール集</title>
+<title>JP Tools - 日本語に特化した無料オンラインツール集</title>
 <meta name="description" content="日本語に特化した無料オンラインツール集。全角半角変換、元号西暦変換、電子印鑑、文字数カウンターなど。ブラウザ完結・サーバー送信なし。">
+<meta property="og:title" content="JP Tools - 日本語に特化した無料オンラインツール集">
+<meta property="og:description" content="全角半角変換、元号西暦変換、電子印鑑メーカーなど7つの日本語特化ツール。全てブラウザ内で処理。">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>工</text></svg>">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #0f1117;
-  --bg-card: #1a1d27;
-  --bg-input: #252836;
-  --bg-hover: #2a2d3a;
-  --text: #e4e4e7;
-  --text-dim: #9ca3af;
-  --accent: #6366f1;
-  --accent-hover: #818cf8;
-  --border: #2e3142;
-  --success: #22c55e;
-  --radius: 12px;
-  --font: 'Segoe UI', -apple-system, 'Noto Sans JP', sans-serif;
+  /* デジタル庁ガイドブック準拠: 色数を絞り、意味のある色使い */
+  --bg: #fafbfc;
+  --bg-card: #ffffff;
+  --bg-input: #f4f5f7;
+  --bg-hover: #eef0f4;
+  --bg-sidebar: #1e2130;
+  --bg-sidebar-hover: #282b3e;
+  --text: #1a1c23;
+  --text-secondary: #5f6368;
+  --text-sidebar: #c8cad0;
+  --text-sidebar-dim: #7c7f8a;
+  --accent: #4f46e5;       /* Primary: Indigo — 操作・インタラクション */
+  --accent-light: #e0e7ff;
+  --accent-hover: #4338ca;
+  --success: #059669;       /* Secondary: Emerald — 成功・完了 */
+  --success-light: #d1fae5;
+  --warning: #d97706;       /* Warning — 注意 */
+  --error: #dc2626;         /* Error — エラー */
+  --border: #e2e5ea;
+  --border-focus: var(--accent);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+  --radius: 10px;
+  --radius-lg: 14px;
+  --font: -apple-system, 'Segoe UI', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
+  --font-mono: 'SF Mono', 'Consolas', 'Menlo', monospace;
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {
@@ -28,165 +48,365 @@ body {
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
-  line-height: 1.6;
+  line-height: 1.7;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Header */
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 24px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-card);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header h1 {
-  font-size: 20px;
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--accent), #a78bfa);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.header-badge {
-  font-size: 12px;
-  color: var(--text-dim);
-  background: var(--bg-input);
-  padding: 4px 10px;
-  border-radius: 20px;
-}
-
-/* Layout */
+/* ========================================
+   Layout — 提示型: 素早く状況を把握できる構造
+   ======================================== */
 .layout {
   display: flex;
-  min-height: calc(100vh - 57px);
+  min-height: 100vh;
 }
 
 /* Sidebar */
 .sidebar {
-  width: 260px;
-  border-right: 1px solid var(--border);
-  background: var(--bg-card);
-  padding: 16px 0;
-  overflow-y: auto;
+  width: 250px;
+  background: var(--bg-sidebar);
+  display: flex;
+  flex-direction: column;
   flex-shrink: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 100;
+  overflow-y: auto;
 }
 
-.sidebar-section {
-  padding: 8px 16px;
+.sidebar-brand {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.sidebar-brand h1 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.3px;
+}
+
+.sidebar-brand p {
   font-size: 11px;
-  font-weight: 600;
+  color: var(--text-sidebar-dim);
+  margin-top: 2px;
+}
+
+.sidebar-nav { padding: 12px 0; flex: 1; }
+
+.sidebar-section {
+  padding: 16px 20px 6px;
+  font-size: 10px;
+  font-weight: 700;
   text-transform: uppercase;
-  color: var(--text-dim);
-  letter-spacing: 1px;
+  color: var(--text-sidebar-dim);
+  letter-spacing: 1.2px;
 }
 
 .sidebar-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 16px;
+  padding: 9px 20px;
   cursor: pointer;
-  transition: all 0.15s;
-  font-size: 14px;
-  color: var(--text-dim);
+  transition: all var(--transition);
+  font-size: 13px;
+  color: var(--text-sidebar);
   border-left: 3px solid transparent;
+  text-decoration: none;
 }
 
 .sidebar-item:hover {
-  background: var(--bg-hover);
-  color: var(--text);
+  background: var(--bg-sidebar-hover);
+  color: #fff;
 }
 
 .sidebar-item.active {
-  background: rgba(99, 102, 241, 0.1);
-  color: var(--accent);
-  border-left-color: var(--accent);
+  background: rgba(79, 70, 229, 0.15);
+  color: #a5b4fc;
+  border-left-color: #818cf8;
 }
 
 .sidebar-item .icon {
-  font-size: 18px;
-  width: 24px;
-  text-align: center;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.06);
+  font-size: 13px;
+  flex-shrink: 0;
 }
 
-/* Main */
-.main {
-  flex: 1;
-  padding: 32px;
-  max-width: 900px;
+.sidebar-item.active .icon {
+  background: rgba(79, 70, 229, 0.3);
 }
+
+.sidebar-footer {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+/* プライバシーバッジ — ガイドブック「色のみで識別しない」: アイコン+テキスト併用 */
+.privacy-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--success);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.privacy-badge svg { flex-shrink: 0; }
+
+/* Main content */
+.main-wrapper {
+  flex: 1;
+  margin-left: 250px;
+}
+
+.main {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 32px 40px 60px;
+}
+
+/* ========================================
+   Home — 提示型: カード一覧で全体を俯瞰
+   ======================================== */
+.home-header {
+  margin-bottom: 32px;
+}
+
+.home-header h2 {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+
+.home-header p {
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+.home-stats {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.home-stat {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  flex: 1;
+  box-shadow: var(--shadow-sm);
+}
+
+.home-stat .num {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.2;
+}
+
+.home-stat .label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.tool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.tool-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  cursor: pointer;
+  transition: all var(--transition);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.tool-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.tool-card .card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.tool-card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  letter-spacing: -0.2px;
+}
+
+/* ガイドブック「タイトルにデータ種別を表記」: 説明文でツールの用途を明確化 */
+.tool-card p {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.tool-card .card-tag {
+  display: inline-block;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+/* カテゴリ別カラー — ガイドブック「注目すべき系列を明確に」 */
+.cat-convert .card-icon { background: #e0e7ff; color: #4f46e5; }
+.cat-convert .card-tag { background: #e0e7ff; color: #4f46e5; }
+.cat-text .card-icon { background: #d1fae5; color: #059669; }
+.cat-text .card-tag { background: #d1fae5; color: #059669; }
+.cat-gen .card-icon { background: #fef3c7; color: #d97706; }
+.cat-gen .card-tag { background: #fef3c7; color: #d97706; }
+
+/* ========================================
+   Tool Pages
+   ======================================== */
+.tool-page { display: none; }
+.tool-page.active { display: block; }
 
 .tool-header {
   margin-bottom: 24px;
 }
 
+.tool-breadcrumb {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tool-breadcrumb a {
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.tool-breadcrumb a:hover { text-decoration: underline; }
+
 .tool-header h2 {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
-  margin-bottom: 4px;
+  letter-spacing: -0.3px;
 }
 
+/* ガイドブック「タイトルだけで中身がわかるようにする」 */
 .tool-header p {
-  color: var(--text-dim);
+  color: var(--text-secondary);
   font-size: 14px;
+  margin-top: 2px;
 }
 
-/* Card */
+/* Card — ガイドブック「関連情報を隣接」: 入力と出力を明確に区分 */
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   padding: 24px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
 }
 
-.card-title {
-  font-size: 13px;
+.card-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
   font-weight: 600;
-  color: var(--text-dim);
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
+
+/* ガイドブック「色のみで識別しない」: ラベルにアイコン(矢印)を併用 */
+.card-label .label-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.card-label .label-dot.input { background: var(--accent); }
+.card-label .label-dot.output { background: var(--success); }
 
 /* Form elements */
 textarea, input[type="text"], input[type="number"], select {
   width: 100%;
   background: var(--bg-input);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: 8px;
-  padding: 12px 14px;
+  padding: 11px 14px;
   color: var(--text);
-  font-family: 'Consolas', 'Courier New', monospace;
-  font-size: 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
   resize: vertical;
-  transition: border-color 0.2s;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  line-height: 1.6;
 }
 
 textarea:focus, input:focus, select:focus {
   outline: none;
-  border-color: var(--accent);
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--accent-light);
 }
 
 textarea { min-height: 120px; }
 
+select {
+  font-family: var(--font);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%235f6368' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
 .input-row {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
   margin-bottom: 12px;
 }
 
 .input-row label {
-  font-size: 14px;
-  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
   white-space: nowrap;
-  min-width: 80px;
+  min-width: 56px;
 }
 
 /* Buttons */
@@ -194,55 +414,50 @@ textarea { min-height: 120px; }
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 10px 20px;
+  padding: 9px 18px;
   border: none;
   border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all var(--transition);
   font-family: var(--font);
+  letter-spacing: -0.1px;
 }
 
 .btn-primary {
   background: var(--accent);
   color: white;
+  box-shadow: 0 1px 3px rgba(79,70,229,0.3);
 }
 
-.btn-primary:hover { background: var(--accent-hover); }
+.btn-primary:hover { background: var(--accent-hover); box-shadow: 0 2px 6px rgba(79,70,229,0.4); }
 
 .btn-secondary {
   background: var(--bg-input);
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
 }
 
-.btn-secondary:hover { background: var(--bg-hover); }
+.btn-secondary:hover { background: var(--bg-hover); border-color: #ccc; }
 
-.btn-sm {
-  padding: 6px 12px;
-  font-size: 12px;
-}
+.btn-sm { padding: 6px 14px; font-size: 12px; }
 
-.btn-group {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-  flex-wrap: wrap;
-}
+.btn-group { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
 
-/* Output */
+/* Output area — ガイドブック「グラフと凡例を隣接」応用: 出力とコピーボタンを隣接 */
 .output-area {
   background: var(--bg-input);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: 8px;
   padding: 14px;
   min-height: 60px;
-  font-family: 'Consolas', 'Courier New', monospace;
-  font-size: 14px;
+  font-family: var(--font-mono);
+  font-size: 13px;
   white-space: pre-wrap;
   word-break: break-all;
   position: relative;
+  line-height: 1.7;
 }
 
 .copy-btn {
@@ -250,44 +465,71 @@ textarea { min-height: 120px; }
   top: 8px;
   right: 8px;
   background: var(--bg-card);
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  padding: 4px 10px;
+  border: 1.5px solid var(--border);
+  color: var(--text-secondary);
+  padding: 4px 12px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all var(--transition);
+  font-family: var(--font);
 }
 
-.copy-btn:hover { color: var(--text); border-color: var(--accent); }
-.copy-btn.copied { color: var(--success); border-color: var(--success); }
+.copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+.copy-btn.copied { color: var(--success); border-color: var(--success); background: var(--success-light); }
 
-/* Stats row */
+/* Stats row — ガイドブック: KPI単値は big_number 表示 */
 .stats {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
 }
 
 .stat-box {
   background: var(--bg-input);
   border-radius: 8px;
-  padding: 12px 16px;
+  padding: 12px 14px;
   text-align: center;
-  min-width: 100px;
-  flex: 1;
+  border: 1px solid var(--border);
 }
 
 .stat-box .num {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--accent);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
 }
 
 .stat-box .label {
-  font-size: 12px;
-  color: var(--text-dim);
+  font-size: 11px;
+  color: var(--text-secondary);
   margin-top: 2px;
+}
+
+/* Progress bar for SNS limits */
+.sns-item { margin-bottom: 14px; }
+
+.sns-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+
+.sns-bar-bg {
+  background: var(--bg-input);
+  border-radius: 4px;
+  height: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.sns-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
 }
 
 /* Seal preview */
@@ -296,427 +538,501 @@ textarea { min-height: 120px; }
   justify-content: center;
   align-items: center;
   padding: 32px;
-  background: white;
+  background: #fff;
   border-radius: 8px;
+  border: 1px solid var(--border);
   margin-bottom: 16px;
 }
 
 /* Color grid */
 .color-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   gap: 10px;
 }
 
 .color-card {
-  border-radius: 8px;
+  border-radius: var(--radius);
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.15s;
+  transition: all var(--transition);
   border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
 }
 
-.color-card:hover { transform: scale(1.03); }
+.color-card:hover { transform: scale(1.04); box-shadow: var(--shadow-md); }
 
-.color-swatch {
-  height: 60px;
-}
+.color-swatch { height: 56px; }
 
 .color-info {
   padding: 8px 10px;
-  background: var(--bg-input);
-  font-size: 12px;
+  background: var(--bg-card);
 }
 
-.color-info .name { font-weight: 600; margin-bottom: 2px; }
-.color-info .hex { color: var(--text-dim); font-family: monospace; }
-
-/* Toast */
-.toast {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background: var(--success);
-  color: white;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: all 0.3s;
-  pointer-events: none;
-  z-index: 1000;
-}
-
-.toast.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .layout { flex-direction: column; }
-  .sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    overflow-x: auto;
-    padding: 8px;
-    gap: 4px;
-  }
-  .sidebar-section { display: none; }
-  .sidebar-item {
-    border-left: none;
-    border-bottom: 2px solid transparent;
-    padding: 8px 14px;
-    white-space: nowrap;
-    font-size: 13px;
-  }
-  .sidebar-item.active {
-    border-bottom-color: var(--accent);
-    border-left-color: transparent;
-  }
-  .main { padding: 20px 16px; }
-  .stats { gap: 8px; }
-  .stat-box { min-width: 70px; padding: 8px 10px; }
-  .stat-box .num { font-size: 22px; }
-}
-
-/* Privacy badge */
-.privacy-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(34, 197, 94, 0.1);
-  color: var(--success);
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-  margin-bottom: 24px;
-}
-
-/* Footer */
-.footer {
-  text-align: center;
-  padding: 20px;
-  color: var(--text-dim);
-  font-size: 12px;
-  border-top: 1px solid var(--border);
-}
-
-.tool-page { display: none; }
-.tool-page.active { display: block; }
-
-/* Swap button */
-.swap-btn {
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  color: var(--accent);
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 18px;
-  transition: all 0.15s;
-  flex-shrink: 0;
-}
-
-.swap-btn:hover { background: var(--bg-hover); border-color: var(--accent); }
+.color-info .name { font-weight: 600; font-size: 13px; margin-bottom: 1px; }
+.color-info .reading { font-size: 11px; color: var(--text-secondary); }
+.color-info .hex { color: var(--text-secondary); font-family: var(--font-mono); font-size: 11px; }
 
 /* Era table */
 .era-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 12px;
 }
 
 .era-table th, .era-table td {
-  padding: 8px 12px;
+  padding: 7px 12px;
   text-align: left;
   border-bottom: 1px solid var(--border);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .era-table th {
-  color: var(--text-dim);
+  color: var(--text-secondary);
   font-weight: 600;
-  font-size: 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--bg-input);
+  position: sticky;
+  top: 0;
+}
+
+.era-table tr:hover td { background: var(--bg-input); }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: var(--text);
+  color: white;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0;
+  transition: all 0.3s;
+  pointer-events: none;
+  z-index: 1000;
+  box-shadow: var(--shadow-lg);
+}
+
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Mobile hamburger */
+.hamburger {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 200;
+  background: var(--bg-sidebar);
+  border: none;
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  font-size: 20px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 90;
+}
+
+/* ========================================
+   Responsive — ガイドブック「単純な操作」
+   ======================================== */
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  .sidebar.open { transform: translateX(0); }
+  .overlay.open { display: block; }
+  .main-wrapper { margin-left: 0; }
+  .main { padding: 60px 16px 40px; }
+  .home-stats { flex-direction: column; }
+  .tool-grid { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: repeat(3, 1fr); }
+  .input-row { flex-wrap: wrap; }
 }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>JP Tools</h1>
-  <span class="header-badge">v1.0.0 / 7 tools</span>
-</div>
+<!-- Mobile -->
+<button class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</button>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
 <div class="layout">
-  <nav class="sidebar">
-    <div class="sidebar-section">変換ツール</div>
-    <div class="sidebar-item active" data-tool="zenkaku">
-      <span class="icon">あA</span>
-      <span>全角⇔半角変換</span>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <h1>JP Tools</h1>
+      <p>日本語特化ツール集 v1.1.0</p>
     </div>
-    <div class="sidebar-item" data-tool="era">
-      <span class="icon">暦</span>
-      <span>元号⇔西暦変換</span>
-    </div>
-    <div class="sidebar-item" data-tool="json">
-      <span class="icon">{}</span>
-      <span>JSON日本語デエスケープ</span>
-    </div>
+    <div class="sidebar-nav">
+      <div class="sidebar-item active" data-tool="home">
+        <span class="icon">🏠</span>
+        <span>ホーム</span>
+      </div>
 
-    <div class="sidebar-section">テキスト</div>
-    <div class="sidebar-item" data-tool="counter">
-      <span class="icon">字</span>
-      <span>文字数カウンター</span>
-    </div>
-    <div class="sidebar-item" data-tool="keigo">
-      <span class="icon">敬</span>
-      <span>敬語変換</span>
-    </div>
+      <div class="sidebar-section">変換</div>
+      <div class="sidebar-item" data-tool="zenkaku">
+        <span class="icon">Aa</span>
+        <span>全角⇔半角変換</span>
+      </div>
+      <div class="sidebar-item" data-tool="era">
+        <span class="icon">暦</span>
+        <span>元号⇔西暦変換</span>
+      </div>
+      <div class="sidebar-item" data-tool="json">
+        <span class="icon">{}</span>
+        <span>JSON デエスケープ</span>
+      </div>
 
-    <div class="sidebar-section">ジェネレーター</div>
-    <div class="sidebar-item" data-tool="inkan">
-      <span class="icon">印</span>
-      <span>電子印鑑メーカー</span>
+      <div class="sidebar-section">テキスト</div>
+      <div class="sidebar-item" data-tool="counter">
+        <span class="icon">字</span>
+        <span>文字数カウンター</span>
+      </div>
+      <div class="sidebar-item" data-tool="keigo">
+        <span class="icon">敬</span>
+        <span>敬語変換</span>
+      </div>
+
+      <div class="sidebar-section">ジェネレーター</div>
+      <div class="sidebar-item" data-tool="inkan">
+        <span class="icon">印</span>
+        <span>電子印鑑メーカー</span>
+      </div>
+      <div class="sidebar-item" data-tool="wacolor">
+        <span class="icon">彩</span>
+        <span>和色パレット</span>
+      </div>
     </div>
-    <div class="sidebar-item" data-tool="wacolor">
-      <span class="icon">彩</span>
-      <span>和色パレット</span>
+    <div class="sidebar-footer">
+      <div class="privacy-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        ブラウザ完結・送信なし
+      </div>
     </div>
   </nav>
 
-  <main class="main">
-    <div class="privacy-badge">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      全てブラウザ内で処理 - データはサーバーに送信されません
-    </div>
+  <div class="main-wrapper">
+    <main class="main">
 
-    <!-- Tool 1: 全角⇔半角変換 -->
-    <div id="tool-zenkaku" class="tool-page active">
-      <div class="tool-header">
-        <h2>全角⇔半角変換</h2>
-        <p>英数字・カタカナの全角/半角を一括変換します</p>
-      </div>
-      <div class="card">
-        <div class="card-title">入力</div>
-        <textarea id="zen-input" placeholder="変換したいテキストを入力...&#10;例: Ｈｅｌｌｏ　Ｗｏｒｌｄ　１２３　アイウエオ"></textarea>
-        <div class="btn-group">
-          <button class="btn btn-primary" onclick="zenConvert('toHalf')">→ 半角に変換</button>
-          <button class="btn btn-primary" onclick="zenConvert('toFull')">→ 全角に変換</button>
-          <button class="btn btn-secondary" onclick="zenConvert('kataToHalf')">カタカナ → 半角カナ</button>
-          <button class="btn btn-secondary" onclick="zenConvert('kataToFull')">半角カナ → 全角カナ</button>
+      <!-- ========== HOME ========== -->
+      <div id="tool-home" class="tool-page active">
+        <div class="home-header">
+          <h2>日本語に特化した無料ツール集</h2>
+          <p>全てブラウザ内で処理。ファイルやデータがサーバーに送信されることはありません。</p>
         </div>
-      </div>
-      <div class="card">
-        <div class="card-title">出力</div>
-        <div class="output-area" id="zen-output">
-          <button class="copy-btn" onclick="copyOutput('zen-output')">コピー</button>
-          <span class="placeholder-text" style="color:var(--text-dim)">変換結果がここに表示されます</span>
-        </div>
-      </div>
-    </div>
 
-    <!-- Tool 2: 元号⇔西暦変換 -->
-    <div id="tool-era" class="tool-page">
-      <div class="tool-header">
-        <h2>元号⇔西暦変換</h2>
-        <p>和暦と西暦の相互変換 + 年齢計算</p>
-      </div>
-      <div class="card">
-        <div class="card-title">西暦 → 和暦</div>
-        <div class="input-row">
-          <label>西暦</label>
-          <input type="number" id="era-western" placeholder="2026" min="645" max="2100" style="max-width:160px">
-          <span>年</span>
-          <button class="btn btn-primary btn-sm" onclick="westernToEra()">変換</button>
+        <div class="home-stats">
+          <div class="home-stat">
+            <div class="num">7</div>
+            <div class="label">ツール数</div>
+          </div>
+          <div class="home-stat">
+            <div class="num">0</div>
+            <div class="label">サーバー送信</div>
+          </div>
+          <div class="home-stat">
+            <div class="num">1</div>
+            <div class="label">HTMLファイル</div>
+          </div>
         </div>
-        <div class="output-area" id="era-result1" style="min-height:40px">
-          <button class="copy-btn" onclick="copyOutput('era-result1')">コピー</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">和暦 → 西暦</div>
-        <div class="input-row">
-          <label>元号</label>
-          <select id="era-name" style="max-width:120px">
-            <option value="reiwa">令和</option>
-            <option value="heisei">平成</option>
-            <option value="showa">昭和</option>
-            <option value="taisho">大正</option>
-            <option value="meiji">明治</option>
-          </select>
-          <input type="number" id="era-year" placeholder="8" min="1" max="100" style="max-width:100px">
-          <span>年</span>
-          <button class="btn btn-primary btn-sm" onclick="eraToWestern()">変換</button>
-        </div>
-        <div class="output-area" id="era-result2" style="min-height:40px">
-          <button class="copy-btn" onclick="copyOutput('era-result2')">コピー</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">年齢早見表（令和8年 / 2026年時点）</div>
-        <table class="era-table">
-          <thead><tr><th>生まれ年</th><th>和暦</th><th>年齢</th><th>干支</th></tr></thead>
-          <tbody id="era-table-body"></tbody>
-        </table>
-      </div>
-    </div>
 
-    <!-- Tool 3: JSON日本語デエスケープ -->
-    <div id="tool-json" class="tool-page">
-      <div class="tool-header">
-        <h2>JSON 日本語デエスケープ</h2>
-        <p>Unicode エスケープ（\uXXXX）を日本語に戻す / 整形する</p>
-      </div>
-      <div class="card">
-        <div class="card-title">入力（エスケープされたJSON）</div>
-        <textarea id="json-input" placeholder='例: {"name": "\u65e5\u672c\u592a\u90ce", "city": "\u6771\u4eac"}'></textarea>
-        <div class="btn-group">
-          <button class="btn btn-primary" onclick="jsonUnescape()">デエスケープ + 整形</button>
-          <button class="btn btn-secondary" onclick="jsonEscape()">日本語 → エスケープ</button>
-          <button class="btn btn-secondary" onclick="jsonMinify()">ミニファイ</button>
+        <div class="sidebar-section" style="padding-left:0;color:var(--text-secondary)">変換ツール</div>
+        <div class="tool-grid" style="margin-bottom:24px">
+          <div class="tool-card cat-convert" onclick="goTool('zenkaku')">
+            <div class="card-icon">Aa</div>
+            <h3>全角⇔半角変換</h3>
+            <p>英数字・カタカナの全角と半角を一括変換。コピペ前の整形に</p>
+            <span class="card-tag">変換</span>
+          </div>
+          <div class="tool-card cat-convert" onclick="goTool('era')">
+            <div class="card-icon">暦</div>
+            <h3>元号⇔西暦変換</h3>
+            <p>令和・平成・昭和の和暦と西暦を相互変換。年齢早見表付き</p>
+            <span class="card-tag">変換</span>
+          </div>
+          <div class="tool-card cat-convert" onclick="goTool('json')">
+            <div class="card-icon">{}</div>
+            <h3>JSON デエスケープ</h3>
+            <p>\\uXXXX を日本語に復元。JSON整形・ミニファイにも対応</p>
+            <span class="card-tag">変換</span>
+          </div>
         </div>
-      </div>
-      <div class="card">
-        <div class="card-title">出力</div>
-        <div class="output-area" id="json-output" style="min-height:120px">
-          <button class="copy-btn" onclick="copyOutput('json-output')">コピー</button>
-          <span class="placeholder-text" style="color:var(--text-dim)">結果がここに表示されます</span>
-        </div>
-      </div>
-    </div>
 
-    <!-- Tool 4: 文字数カウンター -->
-    <div id="tool-counter" class="tool-page">
-      <div class="tool-header">
-        <h2>文字数カウンター</h2>
-        <p>全角/半角を区別してカウント。X(Twitter) / note / はてなブログ等の文字数制限に対応</p>
-      </div>
-      <div class="card">
-        <textarea id="counter-input" placeholder="テキストを入力すると自動でカウントされます..." oninput="updateCounter()" style="min-height:160px"></textarea>
-      </div>
-      <div class="card">
-        <div class="stats" id="counter-stats">
-          <div class="stat-box"><div class="num" id="cs-chars">0</div><div class="label">文字数</div></div>
-          <div class="stat-box"><div class="num" id="cs-chars-nospace">0</div><div class="label">文字数(空白除く)</div></div>
-          <div class="stat-box"><div class="num" id="cs-bytes">0</div><div class="label">バイト数(UTF-8)</div></div>
-          <div class="stat-box"><div class="num" id="cs-lines">0</div><div class="label">行数</div></div>
-          <div class="stat-box"><div class="num" id="cs-words">0</div><div class="label">単語数</div></div>
-          <div class="stat-box"><div class="num" id="cs-fullwidth">0</div><div class="label">全角文字</div></div>
-          <div class="stat-box"><div class="num" id="cs-halfwidth">0</div><div class="label">半角文字</div></div>
+        <div class="sidebar-section" style="padding-left:0;color:var(--text-secondary)">テキストツール</div>
+        <div class="tool-grid" style="margin-bottom:24px">
+          <div class="tool-card cat-text" onclick="goTool('counter')">
+            <div class="card-icon">字</div>
+            <h3>文字数カウンター</h3>
+            <p>全角/半角を区別してカウント。X・note・はてなの文字数制限チェック付き</p>
+            <span class="card-tag">テキスト</span>
+          </div>
+          <div class="tool-card cat-text" onclick="goTool('keigo')">
+            <div class="card-icon">敬</div>
+            <h3>敬語変換</h3>
+            <p>カジュアルな表現をビジネス敬語に自動変換。メール作成の下書きに</p>
+            <span class="card-tag">テキスト</span>
+          </div>
         </div>
-      </div>
-      <div class="card">
-        <div class="card-title">SNS文字数チェック</div>
-        <div id="sns-limits"></div>
-      </div>
-    </div>
 
-    <!-- Tool 5: 敬語変換 -->
-    <div id="tool-keigo" class="tool-page">
-      <div class="tool-header">
-        <h2>敬語変換</h2>
-        <p>カジュアルな表現をビジネス敬語に変換します</p>
-      </div>
-      <div class="card">
-        <div class="card-title">入力（カジュアルな文）</div>
-        <textarea id="keigo-input" placeholder="例: これ見てもらえますか？明日までにやります。"></textarea>
-        <div class="btn-group">
-          <button class="btn btn-primary" onclick="convertKeigo()">敬語に変換</button>
+        <div class="sidebar-section" style="padding-left:0;color:var(--text-secondary)">ジェネレーター</div>
+        <div class="tool-grid">
+          <div class="tool-card cat-gen" onclick="goTool('inkan')">
+            <div class="card-icon">印</div>
+            <h3>電子印鑑メーカー</h3>
+            <p>名前を入力して認印・角印・小判型を生成。SVG/PNGダウンロード</p>
+            <span class="card-tag">生成</span>
+          </div>
+          <div class="tool-card cat-gen" onclick="goTool('wacolor')">
+            <div class="card-icon">彩</div>
+            <h3>和色パレット</h3>
+            <p>日本の伝統色48色。クリックでカラーコードをコピー</p>
+            <span class="card-tag">生成</span>
+          </div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-title">出力（ビジネス敬語）</div>
-        <div class="output-area" id="keigo-output" style="min-height:100px">
-          <button class="copy-btn" onclick="copyOutput('keigo-output')">コピー</button>
-          <span class="placeholder-text" style="color:var(--text-dim)">変換結果がここに表示されます</span>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">敬語変換ルール一覧</div>
-        <table class="era-table" id="keigo-table">
-          <thead><tr><th>カジュアル</th><th>→</th><th>敬語</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
 
-    <!-- Tool 6: 電子印鑑メーカー -->
-    <div id="tool-inkan" class="tool-page">
-      <div class="tool-header">
-        <h2>電子印鑑メーカー</h2>
-        <p>名前を入力するだけで電子印鑑（認印）を生成。SVG/PNGでダウンロード可能</p>
-      </div>
-      <div class="card">
-        <div class="input-row">
-          <label>名前</label>
-          <input type="text" id="inkan-name" placeholder="斎藤" maxlength="4" oninput="generateInkan()">
+      <!-- ========== Tool 1: 全角⇔半角変換 ========== -->
+      <div id="tool-zenkaku" class="tool-page">
+        <div class="tool-header">
+          <div class="tool-breadcrumb"><a onclick="goTool('home')">ホーム</a> <span>›</span> 変換</div>
+          <h2>全角⇔半角変換</h2>
+          <p>英数字・カタカナの全角と半角を一括変換します</p>
         </div>
-        <div class="input-row">
-          <label>形状</label>
-          <select id="inkan-shape" onchange="generateInkan()">
-            <option value="circle">丸印（認印）</option>
-            <option value="square">角印</option>
-            <option value="oval">小判型</option>
-          </select>
+        <div class="card">
+          <div class="card-label"><span class="label-dot input"></span>入力</div>
+          <textarea id="zen-input" placeholder="変換したいテキストを入力...&#10;例: Ｈｅｌｌｏ　Ｗｏｒｌｄ　１２３　アイウエオ"></textarea>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="zenConvert('toHalf')">→ 半角に変換</button>
+            <button class="btn btn-primary" onclick="zenConvert('toFull')">→ 全角に変換</button>
+            <button class="btn btn-secondary" onclick="zenConvert('kataToHalf')">カタカナ → 半角カナ</button>
+            <button class="btn btn-secondary" onclick="zenConvert('kataToFull')">半角カナ → 全角カナ</button>
+          </div>
         </div>
-        <div class="input-row">
-          <label>色</label>
-          <select id="inkan-color" onchange="generateInkan()">
-            <option value="#d32f2f">朱色（標準）</option>
-            <option value="#c62828">深朱色</option>
-            <option value="#1565c0">藍色</option>
-            <option value="#2e7d32">緑</option>
-            <option value="#333333">墨色</option>
-          </select>
-        </div>
-        <div class="input-row">
-          <label>サイズ</label>
-          <input type="number" id="inkan-size" value="120" min="60" max="300" onchange="generateInkan()">
-          <span>px</span>
+        <div class="card">
+          <div class="card-label"><span class="label-dot output"></span>出力</div>
+          <div class="output-area" id="zen-output">
+            <button class="copy-btn" onclick="copyOutput('zen-output')">コピー</button>
+            <span class="placeholder-text" style="color:var(--text-secondary)">変換結果がここに表示されます</span>
+          </div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-title">プレビュー</div>
-        <div class="seal-preview" id="inkan-preview">
-          <svg id="inkan-svg" width="120" height="120"></svg>
-        </div>
-        <div class="btn-group">
-          <button class="btn btn-primary" onclick="downloadInkan('svg')">SVG ダウンロード</button>
-          <button class="btn btn-primary" onclick="downloadInkan('png')">PNG ダウンロード</button>
-        </div>
-      </div>
-    </div>
 
-    <!-- Tool 7: 和色パレット -->
-    <div id="tool-wacolor" class="tool-page">
-      <div class="tool-header">
-        <h2>和色パレット</h2>
-        <p>日本の伝統色をクリックしてカラーコードをコピー</p>
-      </div>
-      <div class="card">
-        <div class="input-row">
-          <label>検索</label>
-          <input type="text" id="wacolor-search" placeholder="色名で検索..." oninput="filterColors()">
+      <!-- ========== Tool 2: 元号⇔西暦変換 ========== -->
+      <div id="tool-era" class="tool-page">
+        <div class="tool-header">
+          <div class="tool-breadcrumb"><a onclick="goTool('home')">ホーム</a> <span>›</span> 変換</div>
+          <h2>元号⇔西暦変換</h2>
+          <p>和暦と西暦の相互変換。年齢・干支も同時に算出します（2026年基準）</p>
+        </div>
+        <div class="card">
+          <div class="card-label"><span class="label-dot input"></span>西暦 → 和暦</div>
+          <div class="input-row">
+            <label>西暦</label>
+            <input type="number" id="era-western" placeholder="2026" min="645" max="2100" style="max-width:140px">
+            <span>年</span>
+            <button class="btn btn-primary btn-sm" onclick="westernToEra()">変換</button>
+          </div>
+          <div class="output-area" id="era-result1" style="min-height:40px">
+            <button class="copy-btn" onclick="copyOutput('era-result1')">コピー</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-label"><span class="label-dot input"></span>和暦 → 西暦</div>
+          <div class="input-row">
+            <label>元号</label>
+            <select id="era-name" style="max-width:110px">
+              <option value="reiwa">令和</option>
+              <option value="heisei">平成</option>
+              <option value="showa">昭和</option>
+              <option value="taisho">大正</option>
+              <option value="meiji">明治</option>
+            </select>
+            <input type="number" id="era-year" placeholder="8" min="1" max="100" style="max-width:90px">
+            <span>年</span>
+            <button class="btn btn-primary btn-sm" onclick="eraToWestern()">変換</button>
+          </div>
+          <div class="output-area" id="era-result2" style="min-height:40px">
+            <button class="copy-btn" onclick="copyOutput('era-result2')">コピー</button>
+          </div>
+        </div>
+        <div class="card" style="max-height:400px;overflow-y:auto">
+          <div class="card-label">年齢早見表（2026年時点）</div>
+          <table class="era-table">
+            <thead><tr><th>生まれ年</th><th>和暦</th><th>年齢</th><th>干支</th></tr></thead>
+            <tbody id="era-table-body"></tbody>
+          </table>
         </div>
       </div>
-      <div class="color-grid" id="wacolor-grid"></div>
-    </div>
 
-  </main>
-</div>
+      <!-- ========== Tool 3: JSON デエスケープ ========== -->
+      <div id="tool-json" class="tool-page">
+        <div class="tool-header">
+          <div class="tool-breadcrumb"><a onclick="goTool('home')">ホーム</a> <span>›</span> 変換</div>
+          <h2>JSON 日本語デエスケープ</h2>
+          <p>Unicode エスケープ（\\uXXXX）を日本語に復元し、整形します</p>
+        </div>
+        <div class="card">
+          <div class="card-label"><span class="label-dot input"></span>入力</div>
+          <textarea id="json-input" placeholder='例: {"name": "\u65e5\u672c\u592a\u90ce", "city": "\u6771\u4eac"}'></textarea>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="jsonUnescape()">デエスケープ + 整形</button>
+            <button class="btn btn-secondary" onclick="jsonEscape()">日本語 → エスケープ</button>
+            <button class="btn btn-secondary" onclick="jsonMinify()">ミニファイ</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-label"><span class="label-dot output"></span>出力</div>
+          <div class="output-area" id="json-output" style="min-height:120px">
+            <button class="copy-btn" onclick="copyOutput('json-output')">コピー</button>
+            <span class="placeholder-text" style="color:var(--text-secondary)">結果がここに表示されます</span>
+          </div>
+        </div>
+      </div>
 
-<div class="footer">
-  JP Tools v1.0.0 - 日本語に特化した無料オンラインツール集 | 全てブラウザ内で処理 | <a href="https://github.com/saitoyuuki/jp-tools" style="color:var(--accent)">GitHub</a>
+      <!-- ========== Tool 4: 文字数カウンター ========== -->
+      <div id="tool-counter" class="tool-page">
+        <div class="tool-header">
+          <div class="tool-breadcrumb"><a onclick="goTool('home')">ホーム</a> <span>›</span> テキスト</div>
+          <h2>文字数カウンター</h2>
+          <p>全角/半角を区別してカウント。SNS投稿の文字数制限チェックに対応</p>
+        </div>
+        <div class="card">
+          <div class="card-label"><span class="label-dot input"></span>テキスト入力</div>
+          <textarea id="counter-input" placeholder="テキストを入力すると自動でカウントされます..." oninput="updateCounter()" style="min-height:160px"></textarea>
+        </div>
+        <div class="card">
+          <div class="card-label">カウント結果</div>
+          <div class="stats" id="counter-stats">
+            <div class="stat-box"><div class="num" id="cs-chars">0</div><div class="label">文字数</div></div>
+            <div class="stat-box"><div class="num" id="cs-chars-nospace">0</div><div class="label">空白除く</div></div>
+            <div class="stat-box"><div class="num" id="cs-bytes">0</div><div class="label">バイト (UTF-8)</div></div>
+            <div class="stat-box"><div class="num" id="cs-lines">0</div><div class="label">行数</div></div>
+            <div class="stat-box"><div class="num" id="cs-fullwidth">0</div><div class="label">全角</div></div>
+            <div class="stat-box"><div class="num" id="cs-halfwidth">0</div><div class="label">半角</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-label">SNS 文字数チェック</div>
+          <div id="sns-limits"></div>
+        </div>
+      </div>
+
+      <!-- ========== Tool 5: 敬語変換 ========== -->
+      <div id="tool-keigo" class="tool-page">
+        <div class="tool-header">
+          <div class="tool-breadcrumb"><a onclick="goTool('home')">ホーム</a> <span>›</span> テキスト</div>
+          <h2>敬語変換</h2>
+          <p>カジュアルな表現をビジネス敬語に変換します（40+変換ルール）</p>
+        </div>
+        <div class="card">
+          <div class="card-label"><span class="label-dot input"></span>入力（カジュアルな文）</div>
+          <textarea id="keigo-input" placeholder="例: これ見てもらえますか？明日までにやります。"></textarea>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="convertKeigo()">敬語に変換</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-label"><span class="label-dot output"></span>出力（ビジネス敬語）</div>
+          <div class="output-area" id="keigo-output" style="min-height:100px">
+            <button class="copy-btn" onclick="copyOutput('keigo-output')">コピー</button>
+            <span class="placeholder-text" style="color:var(--text-secondary)">変換結果がここに表示されます</span>
+          </div>
+        </div>
+        <div class="card" style="max-height:360px;overflow-y:auto">
+          <div class="card-label">変換ルール一覧</div>
+          <table class="era-table" id="keigo-table">
+            <thead><tr><th>カジュアル</th><th></th><th>敬語</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ========== Tool 6: 電子印鑑メーカー ========== -->
+      <div id="tool-inkan" class="tool-page">
+        <div class="tool-header">
+          <div class="tool-breadcrumb"><a onclick="goTool('home')">ホーム</a> <span>›</span> ジェネレーター</div>
+          <h2>電子印鑑メーカー</h2>
+          <p>名前を入力して電子印鑑（認印）を生成。SVG/PNGでダウンロード可能</p>
+        </div>
+        <div class="card">
+          <div class="card-label">設定</div>
+          <div class="input-row">
+            <label>名前</label>
+            <input type="text" id="inkan-name" placeholder="斎藤" maxlength="4" oninput="generateInkan()">
+          </div>
+          <div class="input-row">
+            <label>形状</label>
+            <select id="inkan-shape" onchange="generateInkan()">
+              <option value="circle">丸印（認印）</option>
+              <option value="square">角印</option>
+              <option value="oval">小判型</option>
+            </select>
+          </div>
+          <div class="input-row">
+            <label>色</label>
+            <select id="inkan-color" onchange="generateInkan()">
+              <option value="#d32f2f">朱色（標準）</option>
+              <option value="#c62828">深朱色</option>
+              <option value="#1565c0">藍色</option>
+              <option value="#2e7d32">緑</option>
+              <option value="#333333">墨色</option>
+            </select>
+          </div>
+          <div class="input-row">
+            <label>サイズ</label>
+            <input type="number" id="inkan-size" value="120" min="60" max="300" style="max-width:120px" onchange="generateInkan()">
+            <span>px</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-label">プレビュー</div>
+          <div class="seal-preview" id="inkan-preview">
+            <svg id="inkan-svg" width="120" height="120"></svg>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="downloadInkan('svg')">SVG ダウンロード</button>
+            <button class="btn btn-primary" onclick="downloadInkan('png')">PNG ダウンロード</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== Tool 7: 和色パレット ========== -->
+      <div id="tool-wacolor" class="tool-page">
+        <div class="tool-header">
+          <div class="tool-breadcrumb"><a onclick="goTool('home')">ホーム</a> <span>›</span> ジェネレーター</div>
+          <h2>和色パレット</h2>
+          <p>日本の伝統色48色。クリックでカラーコード（HEX）をコピー</p>
+        </div>
+        <div class="card" style="padding:16px">
+          <div class="input-row" style="margin-bottom:0">
+            <label>検索</label>
+            <input type="text" id="wacolor-search" placeholder="色名・読み・HEXで検索..." oninput="filterColors()">
+          </div>
+        </div>
+        <div style="margin-top:14px">
+          <div class="color-grid" id="wacolor-grid"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
 </div>
 
 <div class="toast" id="toast">コピーしました</div>
@@ -725,14 +1041,27 @@ textarea { min-height: 120px; }
 // ======================
 // Navigation
 // ======================
+function goTool(name) {
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  document.querySelectorAll('.tool-page').forEach(p => p.classList.remove('active'));
+  const item = document.querySelector(`.sidebar-item[data-tool="${name}"]`);
+  if (item) item.classList.add('active');
+  document.getElementById('tool-' + name).classList.add('active');
+  history.replaceState(null, '', '#' + name);
+  window.scrollTo(0, 0);
+  // Close mobile sidebar
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
 document.querySelectorAll('.sidebar-item').forEach(item => {
-  item.addEventListener('click', () => {
-    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-    document.querySelectorAll('.tool-page').forEach(p => p.classList.remove('active'));
-    item.classList.add('active');
-    document.getElementById('tool-' + item.dataset.tool).classList.add('active');
-  });
+  item.addEventListener('click', () => goTool(item.dataset.tool));
 });
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
 
 // ======================
 // Toast
@@ -754,13 +1083,16 @@ function copyOutput(id) {
   });
 }
 
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
 // ======================
 // Tool 1: 全角⇔半角変換
 // ======================
 function zenConvert(mode) {
   const input = document.getElementById('zen-input').value;
   let result = '';
-
   if (mode === 'toHalf') {
     result = input.replace(/[Ａ-Ｚａ-ｚ０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0))
                    .replace(/　/g, ' ')
@@ -777,26 +1109,20 @@ function zenConvert(mode) {
     result = input.replace(/[ｦ-ﾟ][ﾞﾟ]?/g, s => {
       if (s.length === 2) {
         const base = map[s[0]] || s[0];
-        const daku = s[1];
-        if (daku === 'ﾞ') {
-          const dakuMap = {'カ':'ガ','キ':'ギ','ク':'グ','ケ':'ゲ','コ':'ゴ','サ':'ザ','シ':'ジ','ス':'ズ','セ':'ゼ','ソ':'ゾ','タ':'ダ','チ':'ヂ','ツ':'ヅ','テ':'デ','ト':'ド','ハ':'バ','ヒ':'ビ','フ':'ブ','ヘ':'ベ','ホ':'ボ','ウ':'ヴ'};
-          return dakuMap[base] || base + '゛';
+        if (s[1] === 'ﾞ') {
+          const d = {'カ':'ガ','キ':'ギ','ク':'グ','ケ':'ゲ','コ':'ゴ','サ':'ザ','シ':'ジ','ス':'ズ','セ':'ゼ','ソ':'ゾ','タ':'ダ','チ':'ヂ','ツ':'ヅ','テ':'デ','ト':'ド','ハ':'バ','ヒ':'ビ','フ':'ブ','ヘ':'ベ','ホ':'ボ','ウ':'ヴ'};
+          return d[base] || base + '゛';
         }
-        if (daku === 'ﾟ') {
-          const hanMap = {'ハ':'パ','ヒ':'ピ','フ':'プ','ヘ':'ペ','ホ':'ポ'};
-          return hanMap[base] || base + '゜';
+        if (s[1] === 'ﾟ') {
+          const h = {'ハ':'パ','ヒ':'ピ','フ':'プ','ヘ':'ペ','ホ':'ポ'};
+          return h[base] || base + '゜';
         }
       }
       return map[s] || s;
     });
   }
-
   const out = document.getElementById('zen-output');
   out.innerHTML = '<button class="copy-btn" onclick="copyOutput(\'zen-output\')">コピー</button>' + escapeHtml(result);
-}
-
-function escapeHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 // ======================
@@ -810,22 +1136,18 @@ const eras = [
   { name: '明治', romaji: 'Meiji', start: 1868, key: 'meiji' },
 ];
 
+const zodiac = ['申','酉','戌','亥','子','丑','寅','卯','辰','巳','午','未'];
+
 function westernToEra() {
   const y = parseInt(document.getElementById('era-western').value);
-  if (!y || y < 645) { document.getElementById('era-result1').innerHTML = '<button class="copy-btn" onclick="copyOutput(\'era-result1\')">コピー</button>有効な西暦を入力してください'; return; }
+  if (!y || y < 645) { document.getElementById('era-result1').innerHTML = '<button class="copy-btn" onclick="copyOutput(\'era-result1\')">コピー</button><span style="color:var(--error)">有効な西暦を入力してください</span>'; return; }
   const results = [];
   for (const e of eras) {
-    if (y >= e.start) {
-      const ey = y - e.start + 1;
-      results.push(`${e.name}${ey === 1 ? '元' : ey}年 (${e.romaji} ${ey})`);
-      break;
-    }
+    if (y >= e.start) { const ey = y - e.start + 1; results.push(`${e.name}${ey === 1 ? '元' : ey}年（${e.romaji} ${ey}）`); break; }
   }
   const age = 2026 - y;
-  const zodiac = ['申','酉','戌','亥','子','丑','寅','卯','辰','巳','午','未'];
-  const z = zodiac[y % 12];
   results.push(`年齢: ${age - 1}〜${age}歳（2026年時点）`);
-  results.push(`干支: ${z}年`);
+  results.push(`干支: ${zodiac[y % 12]}年`);
   document.getElementById('era-result1').innerHTML = '<button class="copy-btn" onclick="copyOutput(\'era-result1\')">コピー</button>' + results.join('\n');
 }
 
@@ -833,17 +1155,15 @@ function eraToWestern() {
   const key = document.getElementById('era-name').value;
   const ey = parseInt(document.getElementById('era-year').value);
   const era = eras.find(e => e.key === key);
-  if (!era || !ey) { document.getElementById('era-result2').innerHTML = '<button class="copy-btn" onclick="copyOutput(\'era-result2\')">コピー</button>年を入力してください'; return; }
+  if (!era || !ey) { document.getElementById('era-result2').innerHTML = '<button class="copy-btn" onclick="copyOutput(\'era-result2\')">コピー</button><span style="color:var(--error)">年を入力してください</span>'; return; }
   const western = era.start + ey - 1;
   const age = 2026 - western;
   document.getElementById('era-result2').innerHTML = '<button class="copy-btn" onclick="copyOutput(\'era-result2\')">コピー</button>' +
-    `西暦 ${western}年\n年齢: ${age - 1}〜${age}歳（2026年時点）`;
+    `西暦 ${western}年\n年齢: ${age - 1}〜${age}歳（2026年時点）\n干支: ${zodiac[western % 12]}年`;
 }
 
-// 年齢早見表生成
-function buildEraTable() {
+(function buildEraTable() {
   const body = document.getElementById('era-table-body');
-  const zodiac = ['申','酉','戌','亥','子','丑','寅','卯','辰','巳','午','未'];
   const rows = [];
   for (let y = 2026; y >= 1940; y--) {
     const age = 2026 - y;
@@ -852,25 +1172,22 @@ function buildEraTable() {
     rows.push(`<tr><td>${y}年</td><td>${eraStr}</td><td>${age}歳</td><td>${zodiac[y % 12]}</td></tr>`);
   }
   body.innerHTML = rows.join('');
-}
-buildEraTable();
+})();
 
 // ======================
-// Tool 3: JSON日本語デエスケープ
+// Tool 3: JSON デエスケープ
 // ======================
 function jsonUnescape() {
   const input = document.getElementById('json-input').value;
   try {
-    const parsed = JSON.parse(input);
-    const result = JSON.stringify(parsed, null, 2);
+    const result = JSON.stringify(JSON.parse(input), null, 2);
     document.getElementById('json-output').innerHTML = '<button class="copy-btn" onclick="copyOutput(\'json-output\')">コピー</button>' + escapeHtml(result);
   } catch (e) {
-    // try plain unescape
     try {
       const result = input.replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
       document.getElementById('json-output').innerHTML = '<button class="copy-btn" onclick="copyOutput(\'json-output\')">コピー</button>' + escapeHtml(result);
     } catch (e2) {
-      document.getElementById('json-output').innerHTML = '<button class="copy-btn" onclick="copyOutput(\'json-output\')">コピー</button><span style="color:#ef4444">エラー: ' + escapeHtml(e.message) + '</span>';
+      document.getElementById('json-output').innerHTML = '<button class="copy-btn" onclick="copyOutput(\'json-output\')">コピー</button><span style="color:var(--error)">エラー: ' + escapeHtml(e.message) + '</span>';
     }
   }
 }
@@ -887,7 +1204,7 @@ function jsonMinify() {
     const result = JSON.stringify(JSON.parse(input));
     document.getElementById('json-output').innerHTML = '<button class="copy-btn" onclick="copyOutput(\'json-output\')">コピー</button>' + escapeHtml(result);
   } catch (e) {
-    document.getElementById('json-output').innerHTML = '<button class="copy-btn" onclick="copyOutput(\'json-output\')">コピー</button><span style="color:#ef4444">JSONパースエラー: ' + escapeHtml(e.message) + '</span>';
+    document.getElementById('json-output').innerHTML = '<button class="copy-btn" onclick="copyOutput(\'json-output\')">コピー</button><span style="color:var(--error)">JSONパースエラー: ' + escapeHtml(e.message) + '</span>';
   }
 }
 
@@ -900,57 +1217,50 @@ function updateCounter() {
   const charsNoSpace = [...text.replace(/\s/g, '')].length;
   const bytes = new Blob([text]).size;
   const lines = text ? text.split('\n').length : 0;
-  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-
   let fullwidth = 0, halfwidth = 0;
   for (const ch of text) {
     const code = ch.charCodeAt(0);
     if (code > 0xFF || (code >= 0xFF01 && code <= 0xFF60) || (code >= 0xFFE0 && code <= 0xFFE6)) fullwidth++;
     else halfwidth++;
   }
+  document.getElementById('cs-chars').textContent = chars.toLocaleString();
+  document.getElementById('cs-chars-nospace').textContent = charsNoSpace.toLocaleString();
+  document.getElementById('cs-bytes').textContent = bytes.toLocaleString();
+  document.getElementById('cs-lines').textContent = lines.toLocaleString();
+  document.getElementById('cs-fullwidth').textContent = fullwidth.toLocaleString();
+  document.getElementById('cs-halfwidth').textContent = halfwidth.toLocaleString();
 
-  document.getElementById('cs-chars').textContent = chars;
-  document.getElementById('cs-chars-nospace').textContent = charsNoSpace;
-  document.getElementById('cs-bytes').textContent = bytes;
-  document.getElementById('cs-lines').textContent = lines;
-  document.getElementById('cs-words').textContent = words;
-  document.getElementById('cs-fullwidth').textContent = fullwidth;
-  document.getElementById('cs-halfwidth').textContent = halfwidth;
-
-  // SNS limits
+  /* ガイドブック: 棒グラフの原点は0 + 色で状態を表現 */
   const limits = [
-    { name: 'X (Twitter)', max: 140, icon: '𝕏', note: '日本語は1文字=1としてカウント' },
-    { name: 'note', max: 140000, icon: '📝', note: 'タイトル含む' },
-    { name: 'はてなブログ', max: 30000, icon: '🅱', note: '1記事あたり' },
-    { name: 'Instagram', max: 2200, icon: '📷', note: 'キャプション' },
-    { name: 'LINE ステータス', max: 500, icon: '💬', note: '' },
+    { name: 'X (Twitter)', max: 140, note: '日本語は1文字=1' },
+    { name: 'note 記事', max: 140000, note: 'タイトル含む' },
+    { name: 'はてなブログ', max: 30000, note: '1記事' },
+    { name: 'Instagram', max: 2200, note: 'キャプション' },
+    { name: 'LINE ステータス', max: 500, note: '' },
   ];
 
-  const snsHtml = limits.map(l => {
+  document.getElementById('sns-limits').innerHTML = limits.map(l => {
     const pct = Math.min(100, (chars / l.max) * 100);
     const over = chars > l.max;
-    const color = over ? '#ef4444' : pct > 80 ? '#f59e0b' : 'var(--accent)';
-    return `<div style="margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
-        <span>${l.icon} ${l.name}</span>
-        <span style="color:${color};font-weight:600">${chars} / ${l.max.toLocaleString()}${over ? ' (超過!)' : ''}</span>
+    const color = over ? 'var(--error)' : pct > 80 ? 'var(--warning)' : 'var(--accent)';
+    const statusText = over ? '超過' : pct > 80 ? '残りわずか' : 'OK';
+    return `<div class="sns-item">
+      <div class="sns-header">
+        <span><strong>${l.name}</strong>${l.note ? ' <span style="color:var(--text-secondary);font-size:11px">(' + l.note + ')</span>' : ''}</span>
+        <span style="color:${color};font-weight:600;font-size:12px">${chars.toLocaleString()} / ${l.max.toLocaleString()} — ${statusText}</span>
       </div>
-      <div style="background:var(--bg);border-radius:4px;height:6px;overflow:hidden">
-        <div style="width:${pct}%;height:100%;background:${color};border-radius:4px;transition:width 0.2s"></div>
-      </div>
+      <div class="sns-bar-bg"><div class="sns-bar-fill" style="width:${pct}%;background:${color}"></div></div>
     </div>`;
   }).join('');
-
-  document.getElementById('sns-limits').innerHTML = snsHtml;
 }
 
 // ======================
 // Tool 5: 敬語変換
 // ======================
 const keigoRules = [
-  ['見て', 'ご覧いただけますでしょうか'],
   ['見てもらえますか', 'ご確認いただけますでしょうか'],
   ['見てください', 'ご確認いただけますでしょうか'],
+  ['見て', 'ご覧いただけますでしょうか'],
   ['教えてください', 'ご教示いただけますでしょうか'],
   ['教えて', 'ご教示いただけますでしょうか'],
   ['すみません', '申し訳ございません'],
@@ -962,57 +1272,51 @@ const keigoRules = [
   ['りょうかい', '承知いたしました'],
   ['OKです', '承知いたしました'],
   ['おｋ', '承知いたしました'],
-  ['やります', 'いたします'],
   ['やっておきます', '対応いたします'],
+  ['やります', 'いたします'],
   ['できません', 'いたしかねます'],
   ['無理です', 'いたしかねます'],
   ['ちょっと待って', '少々お待ちいただけますでしょうか'],
   ['待ってください', '少々お待ちいただけますでしょうか'],
   ['いいですか', 'よろしいでしょうか'],
-  ['いいですか？', 'よろしいでしょうか？'],
   ['どうですか', 'いかがでしょうか'],
   ['お願いします', 'お願い申し上げます'],
   ['お願い', 'お願い申し上げます'],
-  ['ありがとう', 'ありがとうございます'],
   ['ありがとうございます', '誠にありがとうございます'],
+  ['ありがとう', 'ありがとうございます'],
   ['知りません', '存じ上げません'],
   ['知らない', '存じ上げません'],
   ['もらいました', 'いただきました'],
   ['もらった', 'いただきました'],
   ['行きます', '参ります'],
   ['来ます', 'お越しになります'],
-  ['言います', '申し上げます'],
   ['言いました', '申し上げました'],
-  ['します', 'いたします'],
+  ['言います', '申し上げます'],
   ['しました', 'いたしました'],
-  ['です', 'でございます'],
+  ['します', 'いたします'],
   ['だと思います', 'かと存じます'],
   ['思います', '存じます'],
   ['聞きたい', 'お伺いしたい'],
-  ['送ります', 'お送りいたします'],
   ['送りました', 'お送りいたしました'],
+  ['送ります', 'お送りいたします'],
   ['読んで', 'お目通しいただけますでしょうか'],
   ['確認して', 'ご確認いただけますでしょうか'],
   ['返事ください', 'ご返信いただけますと幸いです'],
-  ['返事', 'ご返信'],
-  ['明日までに', '明日までに'],
   ['会いたい', 'お目にかかりたく存じます'],
   ['よろしく', 'よろしくお願いいたします'],
 ];
 
 function convertKeigo() {
   let text = document.getElementById('keigo-input').value;
-  const sorted = [...keigoRules].sort((a, b) => b[0].length - a[0].length);
-  for (const [from, to] of sorted) {
+  for (const [from, to] of keigoRules) {
     text = text.split(from).join(to);
   }
   document.getElementById('keigo-output').innerHTML = '<button class="copy-btn" onclick="copyOutput(\'keigo-output\')">コピー</button>' + escapeHtml(text);
 }
 
-// 敬語テーブル生成
 (function buildKeigoTable() {
   const body = document.querySelector('#keigo-table tbody');
-  body.innerHTML = keigoRules.slice(0, 20).map(([from, to]) =>
+  body.innerHTML = keigoRules.map(([from, to]) =>
     `<tr><td>${escapeHtml(from)}</td><td style="color:var(--accent)">→</td><td>${escapeHtml(to)}</td></tr>`
   ).join('');
 })();
@@ -1025,62 +1329,42 @@ function generateInkan() {
   const shape = document.getElementById('inkan-shape').value;
   const color = document.getElementById('inkan-color').value;
   const size = parseInt(document.getElementById('inkan-size').value) || 120;
-
   const svg = document.getElementById('inkan-svg');
   svg.setAttribute('width', size);
   svg.setAttribute('height', size);
   svg.setAttribute('viewBox', `0 0 ${size} ${size}`);
-
-  const cx = size / 2;
-  const cy = size / 2;
-  const r = size / 2 - 4;
-  const chars = [...name];
+  const cx = size / 2, cy = size / 2, r = size / 2 - 4;
   const strokeW = Math.max(2, size / 40);
-
   let shapeSvg = '';
-  if (shape === 'circle') {
-    shapeSvg = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${strokeW}"/>`;
-  } else if (shape === 'square') {
-    shapeSvg = `<rect x="4" y="4" width="${size - 8}" height="${size - 8}" fill="none" stroke="${color}" stroke-width="${strokeW}" rx="4"/>`;
-  } else {
-    shapeSvg = `<ellipse cx="${cx}" cy="${cy}" rx="${r}" ry="${r * 0.75}" fill="none" stroke="${color}" stroke-width="${strokeW}"/>`;
-  }
-
-  let textSvg = '';
+  if (shape === 'circle') shapeSvg = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${strokeW}"/>`;
+  else if (shape === 'square') shapeSvg = `<rect x="4" y="4" width="${size - 8}" height="${size - 8}" fill="none" stroke="${color}" stroke-width="${strokeW}" rx="4"/>`;
+  else shapeSvg = `<ellipse cx="${cx}" cy="${cy}" rx="${r}" ry="${r * 0.75}" fill="none" stroke="${color}" stroke-width="${strokeW}"/>`;
+  const chars = [...name];
   const fontSize = chars.length <= 1 ? size * 0.55 : chars.length === 2 ? size * 0.35 : chars.length === 3 ? size * 0.28 : size * 0.24;
-
-  if (chars.length <= 2) {
-    if (chars.length === 1) {
-      textSvg = `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" fill="${color}" font-size="${fontSize}" font-family="serif" font-weight="700">${escapeHtml(chars[0])}</text>`;
-    } else {
-      const offset = fontSize * 0.35;
-      textSvg = `<text x="${cx}" y="${cy - offset}" text-anchor="middle" dominant-baseline="central" fill="${color}" font-size="${fontSize}" font-family="serif" font-weight="700">${escapeHtml(chars[0])}</text>`;
-      textSvg += `<text x="${cx}" y="${cy + offset}" text-anchor="middle" dominant-baseline="central" fill="${color}" font-size="${fontSize}" font-family="serif" font-weight="700">${escapeHtml(chars[1])}</text>`;
-    }
+  let textSvg = '';
+  if (chars.length === 1) {
+    textSvg = `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" fill="${color}" font-size="${fontSize}" font-family="serif" font-weight="700">${escapeHtml(chars[0])}</text>`;
+  } else if (chars.length === 2) {
+    const offset = fontSize * 0.35;
+    textSvg = chars.map((c, i) => `<text x="${cx}" y="${cy + (i === 0 ? -offset : offset)}" text-anchor="middle" dominant-baseline="central" fill="${color}" font-size="${fontSize}" font-family="serif" font-weight="700">${escapeHtml(c)}</text>`).join('');
   } else {
     const totalH = chars.length * fontSize * 0.8;
     const startY = cy - totalH / 2 + fontSize * 0.4;
-    chars.forEach((c, i) => {
-      textSvg += `<text x="${cx}" y="${startY + i * fontSize * 0.8}" text-anchor="middle" dominant-baseline="central" fill="${color}" font-size="${fontSize}" font-family="serif" font-weight="700">${escapeHtml(c)}</text>`;
-    });
+    textSvg = chars.map((c, i) => `<text x="${cx}" y="${startY + i * fontSize * 0.8}" text-anchor="middle" dominant-baseline="central" fill="${color}" font-size="${fontSize}" font-family="serif" font-weight="700">${escapeHtml(c)}</text>`).join('');
   }
-
   svg.innerHTML = shapeSvg + textSvg;
 }
 
 function downloadInkan(format) {
   const svg = document.getElementById('inkan-svg');
   const svgData = new XMLSerializer().serializeToString(svg);
-
   if (format === 'svg') {
     const blob = new Blob([svgData], { type: 'image/svg+xml' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'inkan.svg'; a.click();
+    const a = document.createElement('a'); a.href = url; a.download = 'inkan.svg'; a.click();
     URL.revokeObjectURL(url);
     return;
   }
-
   const size = parseInt(svg.getAttribute('width')) * 2;
   const canvas = document.createElement('canvas');
   canvas.width = size; canvas.height = size;
@@ -1090,8 +1374,7 @@ function downloadInkan(format) {
     ctx.drawImage(img, 0, 0, size, size);
     canvas.toBlob(blob => {
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'inkan.png'; a.click();
+      const a = document.createElement('a'); a.href = url; a.download = 'inkan.png'; a.click();
       URL.revokeObjectURL(url);
     });
   };
@@ -1155,13 +1438,12 @@ const wacolors = [
 ];
 
 function renderColors(colors) {
-  const grid = document.getElementById('wacolor-grid');
-  grid.innerHTML = colors.map(c => `
+  document.getElementById('wacolor-grid').innerHTML = colors.map(c => `
     <div class="color-card" onclick="copyColor('${c.hex}')">
       <div class="color-swatch" style="background:${c.hex}"></div>
       <div class="color-info">
         <div class="name">${c.name}</div>
-        <div style="font-size:11px;color:var(--text-dim);margin-bottom:2px">${c.reading}</div>
+        <div class="reading">${c.reading}</div>
         <div class="hex">${c.hex}</div>
       </div>
     </div>
@@ -1174,8 +1456,7 @@ function copyColor(hex) {
 
 function filterColors() {
   const q = document.getElementById('wacolor-search').value.toLowerCase();
-  const filtered = wacolors.filter(c => c.name.includes(q) || c.reading.includes(q) || c.hex.toLowerCase().includes(q));
-  renderColors(filtered);
+  renderColors(wacolors.filter(c => c.name.includes(q) || c.reading.includes(q) || c.hex.toLowerCase().includes(q)));
 }
 
 renderColors(wacolors);
@@ -1185,19 +1466,10 @@ renderColors(wacolors);
 // ======================
 function handleHash() {
   const hash = location.hash.replace('#', '');
-  if (hash) {
-    const item = document.querySelector(`.sidebar-item[data-tool="${hash}"]`);
-    if (item) item.click();
-  }
+  if (hash) goTool(hash);
 }
 window.addEventListener('hashchange', handleHash);
 handleHash();
-
-document.querySelectorAll('.sidebar-item').forEach(item => {
-  item.addEventListener('click', () => {
-    history.replaceState(null, '', '#' + item.dataset.tool);
-  });
-});
 </script>
 </body>
 </html>
